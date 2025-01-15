@@ -19,25 +19,19 @@ jobs:
 
     container:
       image: debian:11
-      
+
     steps:
     - name: Set architecture
+      shell: bash
       run: |
         if [[ "${{ matrix.platform }}" == "linux/amd64" ]]; then
           echo "ARCH=amd64" >> $GITHUB_ENV
         elif [[ "${{ matrix.platform }}" == "linux/arm64" ]]; then
           echo "ARCH=arm64" >> $GITHUB_ENV
         fi
-
-    - name: Detected architecture
+    - name: Display Architecture
       run: |
-        echo "Derived architecture: $ARCH"
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+        echo "Derived architecture: ${{ env.ARCH }}"
 
     - name: Checkout Code
       uses: actions/checkout@v3
