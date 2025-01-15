@@ -88,8 +88,14 @@ jobs:
         dpkg-checkbuilddeps && \
         dpkg-buildpackage --no-sign -a${{ matrix.arch }}
 
-    - name: Archive Artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: rtpengine-packages-${{ matrix.arch }}
-        path: ../*.deb
+    - name: Upload to Nexus
+      env:
+        NEXUS_URL: 'https://nexus.nerd4ever.com.br/repository/debian-11-${{ matrix.arch }}/'
+        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      run: |
+        # Envia cada pacote .deb gerado para o Nexus
+        for package in ../*.deb; do
+          echo "Uploading $package to $NEXUS_URL"
+          curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" -vvv --upload-file "$package" "${NEXUS_URL}$(basename "$package")"
+        done
