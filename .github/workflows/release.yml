@@ -99,7 +99,8 @@ jobs:
         for package in ../*.deb; do
           echo "Uploading $package to $NEXUS_URL"
           curl -v -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
-            -H 'Content-Type: application/octet-stream' \
+            -H "Content-Type: multipart/form-data" \
             --data-binary "@$package" \
-            "${NEXUS_URL}$(basename "$package")"
+            "${NEXUS_URL}"
         done
+    
