@@ -96,8 +96,10 @@ jobs:
         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
       run: |
-          PACKAGE_NAME=$(ls ../*.deb)
-          curl -v -u "${{secrets.NEXUS_USERNAME}}:${{secrets.NEXUS_PASSWORD}}" \
-          -H 'Content-Type: multipart/form-data' \
-          --data-binary @$PACKAGE_NAME \
-          "${NEXUS_URL}"
+        for package in ../*.deb; do
+          echo "Uploading $package to $NEXUS_URL"
+          curl -v -u "${NEXUS_USERNAME}:${NEXUS_PASSWORD}" \
+            -H 'Content-Type: application/octet-stream' \
+            --data-binary "@$package" \
+            "${NEXUS_URL}$(basename "$package")"
+        done
