@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        arch: [amd64]
     runs-on: ubuntu-latest
     env:
       DEBIAN_FRONTEND: "noninteractive"
@@ -52,7 +52,6 @@ jobs:
         libsystemd-dev \
         libxmlrpc-core-c3-dev \
         libcurl4-openssl-dev \
-        libcurl4-gnutls-dev \
         libevent-dev \
         libpcap0.8-dev \
         unzip \
