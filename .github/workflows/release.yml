@@ -11,9 +11,12 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       DEBIAN_FRONTEND: "noninteractive"
+
+    container:
+      image: debian:11
 
     steps:
     - name: Checkout Code
@@ -24,26 +27,24 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo dpkg --add-architecture ${{ matrix.arch }} && \
-        sudo apt-get update && \
-        sudo apt-get install -y --no-install-recommends build-essential dpkg-dev debhelper default-libmysqlclient-dev gperf \
+        apt-get update && \
+        apt-get install -y --no-install-recommends build-essential dpkg-dev debhelper default-libmysqlclient-dev gperf \
           libxtables-dev libip6tc-dev libip4tc-dev libavcodec-dev libavfilter-dev libavformat-dev libavutil-dev \
           libbencode-perl libcrypt-openssl-rsa-perl libcrypt-rijndael-perl libhiredis-dev libio-multiplex-perl \
           libio-socket-inet6-perl libjson-glib-dev libdigest-crc-perl libdigest-hmac-perl libnet-interface-perl \
           libssl-dev libsystemd-dev libxmlrpc-core-c3-dev libcurl4-openssl-dev libevent-dev libpcap0.8-dev unzip \
           nfs-common dkms libspandsp-dev libmosquitto-dev python3-websockets cmake wget libbcg729-0 libbcg729-dev \
           libiptc-dev libjson-perl libmnl-dev libncurses-dev libnftnl-dev libopus-dev libtest2-suite-perl liburing-dev \
-          libwebsockets-dev pandoc pkgconf systemd discount
+          libwebsockets-dev pandoc pkgconf systemd discount \
+          --no-install-recommends
 
     - name: Build Debian Package
       run: |
-        mkdir -p .data/output && \
-        cd .data && \
-        dpkg-buildpackage --no-sign -a${{ matrix.arch }} && \
-        mv ../*.deb output/
+        dpkg-checkbuilddeps && \
+        dpkg-buildpackage --no-sign -a${{ matrix.arch }}
 
     - name: Archive Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: rtpengine-packages-${{ matrix.arch }}
-        path: .data/output/*.deb
+        path: ../*.deb
