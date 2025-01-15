@@ -82,6 +82,7 @@ jobs:
         libglib2.0-dev \
         libsocket6-perl \
         zlib1g-dev \
+        ca-certificates \
         curl
 
     - name: Build Debian Package
