@@ -10,9 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
+        arch: [amd64]
     runs-on: ubuntu-latest
     env:
       DEBIAN_FRONTEND: "noninteractive"
@@ -21,18 +19,6 @@ jobs:
       image: debian:11
 
     steps:
-    - name: Set architecture
-      shell: bash
-      run: |
-        if [[ "${{ matrix.platform }}" == "linux/amd64" ]]; then
-          echo "ARCH=amd64" >> $GITHUB_ENV
-        elif [[ "${{ matrix.platform }}" == "linux/arm64" ]]; then
-          echo "ARCH=arm64" >> $GITHUB_ENV
-        fi
-    - name: Display Architecture
-      run: |
-        echo "Derived architecture: ${{ env.ARCH }}"
-
     - name: Checkout Code
       uses: actions/checkout@v3
 
